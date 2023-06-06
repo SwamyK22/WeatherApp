@@ -10,15 +10,9 @@ import styles from './styles';
 const WeatherApp = ({navigation}) => {
 
 
-    const data = useSelector(state => state.dataReducer.weatherData);
-
-    const [date, setDate] = useState(
-        new Date(data.forecast.forecastday[0].date).toLocaleDateString('en-Us', {weekday:'long', month:'long', day:'numeric'})
-    )
-    const dispatch = useDispatch();
-
-     //Hour data//   
-    const hourData = data.forecast.forecastday[0].hour.map((x) => {
+    const {data, hourData, infoList} = useSelector(state => ({
+      data: state.dataReducer.weatherData,
+      hourData: state.dataReducer.weatherData.forecast.forecastday[0].hour.map((x) => {
         const index = x.time.length-5;
         const time = x.time.slice(index, index+2)
         const ap = Number(time) >= 12 ? 'PM' : 'AM'
@@ -26,19 +20,22 @@ const WeatherApp = ({navigation}) => {
             time:Number(time) == 0 ? `12 ${ap}`: Number(time) > 12 ?`${Number(time)-12} ${ap}` :time+' '+ap,
             temp:x.temp_c
         }
-    });
+      }),
+      infoList: [
+        {title:'Sunrise', val:state.dataReducer.weatherData.forecast.forecastday[0].astro.sunrise},
+        {title:'Wind', val:`${state.dataReducer.weatherData.current.wind_kph} km/h`},
+        {title:'Precipitation', val:`${state.dataReducer.weatherData.current.precip_mm} mm`},
+        {title:'Sunset', val:state.dataReducer.weatherData.forecast.forecastday[0].astro.sunset},
+        {title:'Pressure', val:`${state.dataReducer.weatherData.current.pressure_mb} mb`},
+        {title:'Humidity', val:`${state.dataReducer.weatherData.current.humidity} %`},
+      ]
+    }));
+   
 
-    //infoList//
-    const infoList = [
-        {title:'Sunrise', val:data.forecast.forecastday[0].astro.sunrise},
-        {title:'Wind', val:`${data.current.wind_kph} km/h`},
-        {title:'Precipitation', val:`${data.current.precip_mm} mm`},
-        {title:'Sunset', val:data.forecast.forecastday[0].astro.sunset},
-        {title:'Pressure', val:`${data.current.pressure_mb} mb`},
-        {title:'Humidity', val:`${data.current.humidity} %`},
-    ]
- 
-
+    const [date, setDate] = useState(
+        new Date(data.forecast.forecastday[0].date).toLocaleDateString('en-Us', {weekday:'long', month:'long', day:'numeric'})
+    )
+    const dispatch = useDispatch();
 
     const setUserData = debounce( val => {
        dispatch({type:'USER_INPUT', payload:val})
