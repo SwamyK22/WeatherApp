@@ -10,7 +10,7 @@ import styles from './styles';
 const WeatherApp = ({navigation}) => {
 
 
-    const {data, hourData, infoList} = useSelector(state => ({
+    const {data, hourData, infoList, date} = useSelector(state => ({
       data: state.dataReducer.weatherData,
       hourData: state.dataReducer.weatherData.forecast.forecastday[0].hour.map((x) => {
         const index = x.time.length-5;
@@ -28,13 +28,10 @@ const WeatherApp = ({navigation}) => {
         {title:'Sunset', val:state.dataReducer.weatherData.forecast.forecastday[0].astro.sunset},
         {title:'Pressure', val:`${state.dataReducer.weatherData.current.pressure_mb} mb`},
         {title:'Humidity', val:`${state.dataReducer.weatherData.current.humidity} %`},
-      ]
+      ],
+        date:new Date(state.dataReducer.weatherData.forecast.forecastday[0].date).toLocaleDateString('en-Us', {weekday:'long', month:'long', day:'numeric'}) 
     }));
-   
-
-    const [date, setDate] = useState(
-        new Date(data.forecast.forecastday[0].date).toLocaleDateString('en-Us', {weekday:'long', month:'long', day:'numeric'})
-    )
+    
     const dispatch = useDispatch();
 
     const setUserData = debounce( val => {

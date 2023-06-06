@@ -11,6 +11,7 @@ const Flash = ({navigation}) => {
     const userInput = useSelector((state) => state.dataReducer.userInput);
 
     const dispatch = useDispatch();
+    
     const fetchData = async () => {
       try {
         const res = await axiosInstance.get(`${userInput}&days=6&aqi=no&alerts=no`);
